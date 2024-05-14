@@ -12,7 +12,78 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyCartPage extends StatelessWidget {
+class MyCartPage extends StatefulWidget {
+  @override
+  _MyCartPageState createState() => _MyCartPageState();
+}
+
+class _MyCartPageState extends State<MyCartPage> {
+  List<Product> products = [
+    Product(
+        name: 'Navy Pullover Hoodie',
+        color: 'Blue',
+        size: 'M',
+        quantity: 1,
+        price: 24.99,
+        imageUrl:
+            'https://fullyfilmy.in/cdn/shop/files/Navy_7e4fa346-a1b8-4e65-8f99-acfddb84731b.jpg?v=1700722858'),
+    Product(
+        name: 'Carrito Women Boots',
+        color: 'Black',
+        size: '6(UK)',
+        quantity: 1,
+        price: 67.49,
+        imageUrl:
+            'https://atlas-content-cdn.pixelsquid.com/stock-images/women-s-boots-zeJeQZ8-600.jpg'),
+    Product(
+        name: 'Fashion Ladies Backpack',
+        color: 'Red',
+        size: 'Small',
+        quantity: 1,
+        price: 44.99,
+        imageUrl:
+            'https://5.imimg.com/data5/GW/IC/MY-7308759/selection_338-500x500.png'),
+    Product(
+        name: 'Unisex Fedora Hat',
+        color: 'Black',
+        size: 'M',
+        quantity: 1,
+        price: 16.49,
+        imageUrl:
+            'https://contents.mediadecathlon.com/p2233686/e7ce922f782a8474c4082b85eee77000/p2233686.jpg'),
+  ];
+
+  void removeProduct(Product product) {
+    setState(() {
+      products.remove(product);
+    });
+  }
+
+  void updateProductQuantity(Product product) {
+    setState(() {});
+  }
+
+  double calculateSubtotal() {
+    double subtotal = 0.0;
+    for (var product in products) {
+      subtotal += (product.price * product.quantity);
+    }
+    return subtotal;
+  }
+
+  double calculateTotal() {
+    double total = calculateSubtotal() + 25.0;
+    return total;
+  }
+
+  int calculateTotalQuantity() {
+    int totalQuantity = 0;
+    for (var product in products) {
+      totalQuantity += product.quantity;
+    }
+    return totalQuantity;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -47,7 +118,7 @@ class MyCartPage extends StatelessWidget {
                       minHeight: 10,
                     ),
                     child: Text(
-                      '${products.length}',
+                      '${calculateTotalQuantity()}',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -68,7 +139,11 @@ class MyCartPage extends StatelessWidget {
                 child: ListView.builder(
                   itemCount: products.length,
                   itemBuilder: (context, index) {
-                    return CartItemWidget(product: products[index]);
+                    return CartItemWidget(
+                      product: products[index],
+                      onRemove: removeProduct,
+                      onQuantityChange: updateProductQuantity,
+                    );
                   },
                 ),
               ),
@@ -138,25 +213,17 @@ class MyCartPage extends StatelessWidget {
       ),
     );
   }
-
-  double calculateSubtotal() {
-    double subtotal = 0.0;
-    for (var product in products) {
-      subtotal += (product.price * product.quantity);
-    }
-    return subtotal;
-  }
-
-  double calculateTotal() {
-    double total = calculateSubtotal() + 25.0;
-    return total;
-  }
 }
 
 class CartItemWidget extends StatelessWidget {
   final Product product;
+  final Function(Product) onRemove;
+  final Function(Product) onQuantityChange;
 
-  CartItemWidget({required this.product});
+  CartItemWidget(
+      {required this.product,
+      required this.onRemove,
+      required this.onQuantityChange});
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +241,9 @@ class CartItemWidget extends StatelessWidget {
             ),
             IconButton(
               icon: Icon(Icons.delete),
-              onPressed: () {},
+              onPressed: () {
+                onRemove(product);
+              },
             ),
           ],
         ),
@@ -194,9 +263,27 @@ class CartItemWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Quantity: ${product.quantity}',
-                  style: TextStyle(fontSize: 14.0),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: () {
+                        product.decreaseQuantity();
+                        onQuantityChange(product);
+                      },
+                    ),
+                    Text(
+                      'Quantity: ${product.quantity}',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        product.increaseQuantity();
+                        onQuantityChange(product);
+                      },
+                    ),
+                  ],
                 ),
                 Text(
                   '\$${(product.price * product.quantity).toStringAsFixed(2)}',
@@ -215,7 +302,7 @@ class Product {
   final String name;
   final String color;
   final String size;
-  final int quantity;
+  int quantity;
   final double price;
   final String imageUrl;
 
@@ -226,39 +313,14 @@ class Product {
       required this.quantity,
       required this.price,
       required this.imageUrl});
-}
 
-List<Product> products = [
-  Product(
-      name: 'Navy Pullover Hoodie',
-      color: 'Blue',
-      size: 'M',
-      quantity: 1,
-      price: 24.99,
-      imageUrl:
-          'https://fullyfilmy.in/cdn/shop/files/Navy_7e4fa346-a1b8-4e65-8f99-acfddb84731b.jpg?v=1700722858'),
-  Product(
-      name: 'Carrito Women Boots',
-      color: 'Black',
-      size: '6(UK)',
-      quantity: 1,
-      price: 67.49,
-      imageUrl:
-          'https://atlas-content-cdn.pixelsquid.com/stock-images/women-s-boots-zeJeQZ8-600.jpg'),
-  Product(
-      name: 'Fashion Ladies Backpack',
-      color: 'Red',
-      size: 'Small',
-      quantity: 1,
-      price: 44.99,
-      imageUrl:
-          'https://5.imimg.com/data5/GW/IC/MY-7308759/selection_338-500x500.png'),
-  Product(
-      name: 'Unisex Fedora Hat',
-      color: 'Black',
-      size: 'M',
-      quantity: 1,
-      price: 16.49,
-      imageUrl:
-          'https://contents.mediadecathlon.com/p2233686/e7ce922f782a8474c4082b85eee77000/p2233686.jpg'),
-];
+  void increaseQuantity() {
+    quantity++;
+  }
+
+  void decreaseQuantity() {
+    if (quantity > 1) {
+      quantity--;
+    }
+  }
+}
