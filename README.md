@@ -9,7 +9,7 @@ MyCartApp is a simple shopping cart application built using the Flutter framewor
 - Display a list of products in the cart.
 - Calculate and display the subtotal, tax fee, and total amount.
 - Display the number of items in the cart on the app bar.
-- Remove items from the cart (functionality not fully implemented).
+- Remove items from the cart.
 - Navigate back to the previous screen using the back button on the app bar.
 - Proceed to checkout (button available, but functionality not implemented).
 
