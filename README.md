@@ -86,7 +86,6 @@ The app uses a list of sample products defined in the `products` list. Each prod
 
 ## Future Enhancements
 
-- Implement the functionality to remove items from the cart.
 - Add functionality to navigate to a checkout screen.
 - Enhance the UI with more detailed styling.
 - Add user authentication and persistent cart storage.
